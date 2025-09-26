@@ -25,6 +25,9 @@ STATIC_FILES_DIR=$WEB_ROOT/sites/default/files
 
 mkdir -p $DUMPS_DIR
 
+echo "Listing tables"
+mysql -h$DB_HOST -P$DB_PORT -u$DB_USER -p$DB_PASSWORD $DB_NAME -e "show tables;"
+
 cd $APP_ROOT
 # Step 1 - Compress drupal database
 echo -e "> Export database to $APP_ROOT/.devpanel/dumps"
