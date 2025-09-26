@@ -19,36 +19,20 @@ echo -e "-------------------------------"
 echo -e "| DevPanel Quickstart Creator |"
 echo -e "-------------------------------\n"
 
-
 # Preparing
-WORK_DIR=$APP_ROOT
-TMP_DIR=/tmp/devpanel/quickstart
-DUMPS_DIR=$TMP_DIR/dumps
-STATIC_FILES_DIR=$WEB_ROOT/$(drush php-eval "echo \Drupal\Core\StreamWrapper\PublicStream::basePath();") # Drupal 8 ways
+DUMPS_DIR=/tmp/devpanel/quickstart/dumps
+STATIC_FILES_DIR=$WEB_ROOT/sites/default/files
 
 mkdir -p $DUMPS_DIR
-#== Install needed tool
-if [[ ! -n $(which yq) ]]; then
-    echo -e "> Install needed tool"
-    wget https://github.com/mikefarah/yq/releases/download/v4.2.0/yq_linux_amd64.tar.gz -O - -q | \
-    tar xz && sudo mv yq_linux_amd64 /usr/bin/yq
-fi
 
+cd $APP_ROOT
 # Step 1 - Compress drupal database
-cd $WORK_DIR
-echo -e "> Export database using drupal/drush"
-drush cr --quiet
-drush sql-dump > $TMP_DIR/$DB_NAME.sql --extra=--no-tablespaces
-
-echo -e "> Compress database"
-tar czf $DUMPS_DIR/db.sql.tgz -C $TMP_DIR $DB_NAME.sql
-
-echo -e "> Store database to $APP_ROOT/.devpanel/dumps"
+echo -e "> Export database to $APP_ROOT/.devpanel/dumps"
 mkdir -p $APP_ROOT/.devpanel/dumps
-mv $DUMPS_DIR/db.sql.tgz $APP_ROOT/.devpanel/dumps/db.sql.tgz
+drush cr --quiet
+drush sql-dump --result-file=../.devpanel/dumps/db.sql --gzip --extra-dump=--no-tablespaces
 
 # Step 2 - Compress static files
-cd $WORK_DIR
 echo -e "> Compress static files"
 tar czf $DUMPS_DIR/files.tgz -C $STATIC_FILES_DIR .
 
