@@ -37,5 +37,7 @@ echo -e "> Compress static files"
 tar czf $DUMPS_DIR/files.tgz -C $STATIC_FILES_DIR .
 
 echo -e "> Store files.tgz to $APP_ROOT/.devpanel/dumps"
-mkdir -p $APP_ROOT/.devpanel/dumps
 mv $DUMPS_DIR/files.tgz $APP_ROOT/.devpanel/dumps/files.tgz
+
+echo 'Listing $APP_ROOT/.devpanel/dumps files'
+ls -la $APP_ROOT/.devpanel/dumps
