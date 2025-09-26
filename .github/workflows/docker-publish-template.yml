@@ -13,7 +13,7 @@ jobs:
         env:
           DP_APP_ID: 'open-social'
           APP_ROOT: '/var/www/html'
-          WEB_ROOT: '/var/www/html/public'
+          WEB_ROOT: '/var/www/html/web'
           CODES_USER_DATA_DIR: '/var/www/html/.vscode'
           CODES_WORKING_DIR: '/var/www/html'
           APACHE_RUN_USER: 'www'
