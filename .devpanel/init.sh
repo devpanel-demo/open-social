@@ -39,8 +39,8 @@ cd $WEB_ROOT && git submodule update --init --recursive
 if [[ $(mysql -h$DB_HOST -P$DB_PORT -u$DB_USER -p$DB_PASSWORD $DB_NAME -e "show tables;") == '' ]]; then
   echo "Site installing ..."
   cd $APP_ROOT
-  drush -y site-install social --account-name=devpanel --account-pass=devpanel --site-name="Open Social" --db-url=mysql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
-  drush cr
+  vendor/bin/drush -y site-install social --account-name=devpanel --account-pass=devpanel --site-name="Open Social" --db-url=mysql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
+  vendor/bin/drush cr
 fi
 
 #== Setup settings.php file
@@ -53,7 +53,7 @@ sudo sed -i -e "s/^\$settings\['hash_salt'\].*/\$settings\['hash_salt'\] = '$DRU
 
 #== Update permission
 echo 'Update permission ....'
-drush cr
+vendor/bin/drush cr
 sudo chown -R $APACHE_RUN_USER:$APACHE_RUN_GROUP $STATIC_FILES_PATH
 sudo chown www:www $SETTINGS_FILES_PATH
 sudo chmod 644 $SETTINGS_FILES_PATH
