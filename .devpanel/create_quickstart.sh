@@ -25,6 +25,15 @@ STATIC_FILES_DIR=$WEB_ROOT/sites/default/files
 
 mkdir -p $DUMPS_DIR
 
+echo "Db connect info"
+echo "Host: $DB_HOST"
+echo "Port: $DB_PORT"
+echo "User: $DB_USER"
+echo "DB: $DB_NAME"
+
+echo "Drush status"
+./vendor/bin/drush status
+
 echo "Listing tables"
 mysql -h$DB_HOST -P$DB_PORT -u$DB_USER -p$DB_PASSWORD $DB_NAME -e "show tables;"
 
