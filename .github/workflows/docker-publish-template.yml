@@ -60,7 +60,7 @@ jobs:
           docker exec ${{ job.services.webserver.id }} bash -c "sudo chown -R www:www \$APP_ROOT && chmod +x \$APP_ROOT/.devpanel/init.sh && chmod +x \$APP_ROOT/.devpanel/custom_package_installer.sh && chmod +x \$APP_ROOT/.devpanel/init-container.sh"
           echo "INSTALL CUSTOM PACKAGE"
           docker exec ${{ job.services.webserver.id }} bash -c "cd \$APP_ROOT && bash .devpanel/custom_package_installer.sh"
-          echo "INSTALL SHOPWARE"
+          echo "INSTALL DRUPAL"
           docker exec ${{ job.services.webserver.id }} bash -c "cd \$APP_ROOT && bash .devpanel/init.sh"
           docker exec ${{ job.services.webserver.id }} bash -c "cd \$APP_ROOT && ls -al"
           echo "DUMPS DATABASE + STATIC FILE"
