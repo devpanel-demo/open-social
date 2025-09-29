@@ -34,6 +34,7 @@ if [[ -f "$WEB_ROOT/composer.json" ]]; then
 fi
 
 cd $WEB_ROOT && git submodule update --init --recursive
+cd $APP_ROOT && mkdir -p private && chmod 775 private
 
 #== Drush Site Install
 if [[ $(mysql -h$DB_HOST -P$DB_PORT -u$DB_USER -p$DB_PASSWORD $DB_NAME -e "show tables;") == '' ]]; then
