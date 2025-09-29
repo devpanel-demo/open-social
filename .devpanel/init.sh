@@ -57,11 +57,11 @@ mysql -h$DB_HOST -P$DB_PORT -u$DB_USER -p$DB_PASSWORD $DB_NAME -e "show tables;"
 # if [[ $(mysql -h$DB_HOST -P$DB_PORT -u$DB_USER -p$DB_PASSWORD $DB_NAME -e "show tables;") == '' ]]; then
   echo "Site installing ..."
   cd $APP_ROOT
-  vendor/bin/drush -y site-install social --account-name=devpanel --account-pass=devpanel --site-name="Open Social" --strict-config=0
-  # --db-url=mysql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME \
+  vendor/bin/drush -y site-install social --account-name=devpanel --account-pass=devpanel --site-name="Open Social" \ 
+  --db-url=mysql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
   # --no-interaction
   vendor/bin/drush cr
 # fi
 
-# echo "Overwrite settings from site-install"
-# sudo cp $APP_ROOT/.devpanel/drupal-settings.local.php $WEB_ROOT/sites/default/settings.local.php
+echo "Overwrite settings from site-install"
+sudo cp $APP_ROOT/.devpanel/drupal-settings.local.php $WEB_ROOT/sites/default/settings.local.php
