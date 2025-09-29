@@ -50,6 +50,9 @@ vendor/bin/drush cr
 sudo chown www:www $SETTINGS_FILES_PATH
 sudo chmod 644 $SETTINGS_FILES_PATH
 
+echo "Listing tables init.sh"
+mysql -h$DB_HOST -P$DB_PORT -u$DB_USER -p$DB_PASSWORD $DB_NAME -e "show tables;"
+
 #== Drush Site Install
 if [[ $(mysql -h$DB_HOST -P$DB_PORT -u$DB_USER -p$DB_PASSWORD $DB_NAME -e "show tables;") == '' ]]; then
   echo "Site installing ..."
