@@ -19,7 +19,8 @@
 if [ -z "$(drush status --field=db-status)" ]; then
   if [[ -f "$APP_ROOT/.devpanel/dumps/db.sql.gz" ]]; then
     echo  'Import mysql file ...'
-    drush sqlq --file="$APP_ROOT/.devpanel/dumps/db.sql.gz" --file-delete
+    # drush sqlq --file="$APP_ROOT/.devpanel/dumps/db.sql.gz" --file-delete
+    drush sqlq --file="$APP_ROOT/.devpanel/dumps/db.sql.gz"
   fi
 fi
 
