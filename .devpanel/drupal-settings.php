@@ -756,20 +756,19 @@ $settings['entity_update_backup'] = TRUE;
  */
 $settings['migrate_node_migrate_type_classic'] = FALSE;
 
-
-// /**
-//  * There are some basic configuration created by DevPanel
-//  */
-// $databases['default']['default'] = [
-//   'database' => getenv('DB_NAME'),
-//   'username' => getenv('DB_USER'),
-//   'password' => getenv('DB_PASSWORD'),
-//   'host' => getenv('DB_HOST'),
-//   'port' => getenv('DB_PORT'),
-//   'driver' => getenv('DB_DRIVER'),
-//   'prefix' => '',
-//   'collation' => 'utf8mb4_general_ci',
-// ];
+/**
+ * There are some basic configuration created by DevPanel
+ */
+$databases['default']['default'] = [
+  'database' => getenv('DB_NAME'),
+  'username' => getenv('DB_USER'),
+  'password' => getenv('DB_PASSWORD'),
+  'host' => getenv('DB_HOST'),
+  'port' => getenv('DB_PORT'),
+  'driver' => getenv('DB_DRIVER'),
+  'prefix' => '',
+  'collation' => 'utf8mb4_general_ci',
+];
 
 /**
  * Load local development override configuration, if available.
