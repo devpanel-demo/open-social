@@ -23,13 +23,10 @@ echo -e "-------------------------------\n"
 DUMPS_DIR=/tmp/devpanel/quickstart/dumps
 STATIC_FILES_DIR=$WEB_ROOT/sites/default/files
 
-mkdir -p $DUMPS_DIR
+echo "Listing STATIC_FILES_DIR"
+ls -la $STATIC_FILES_DIR
 
-echo "Db connect info"
-echo "Host: $DB_HOST"
-echo "Port: $DB_PORT"
-echo "User: $DB_USER"
-echo "DB: $DB_NAME"
+mkdir -p $DUMPS_DIR
 
 echo "Drush status"
 ./vendor/bin/drush status
