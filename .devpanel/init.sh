@@ -35,6 +35,9 @@ fi
 
 cd $WEB_ROOT && git submodule update --init --recursive
 cd $APP_ROOT && mkdir -p private && chmod 775 private
+#== Setup settings.php file
+sudo cp $APP_ROOT/.devpanel/drupal-settings.php $SETTINGS_FILES_PATH
+
 
 #== Drush Site Install
 if [[ $(mysql -h$DB_HOST -P$DB_PORT -u$DB_USER -p$DB_PASSWORD $DB_NAME -e "show tables;") == '' ]]; then
@@ -43,9 +46,6 @@ if [[ $(mysql -h$DB_HOST -P$DB_PORT -u$DB_USER -p$DB_PASSWORD $DB_NAME -e "show 
   vendor/bin/drush -y site-install social --account-name=devpanel --account-pass=devpanel --site-name="Open Social" --db-url=mysql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
   vendor/bin/drush cr
 fi
-
-#== Setup settings.php file
-sudo cp $APP_ROOT/.devpanel/drupal-settings.php $SETTINGS_FILES_PATH
 
 #== Generate hash salt
 echo 'Generate hash salt ...'
