@@ -58,9 +58,9 @@ mysql -h$DB_HOST -P$DB_PORT -u$DB_USER -p$DB_PASSWORD $DB_NAME -e "show tables;"
   echo "Site installing ..."
   cd $APP_ROOT
   vendor/bin/drush -y site-install social --account-name=devpanel --account-pass=devpanel --site-name="Open Social" \
-  --existing-config
-  # --db-url=mysql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME \
-  # --no-interaction --no-db-url
+  # --existing-config
+  --db-url=mysql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME \
+  --no-interaction --no-db-url
   vendor/bin/drush cr
 # fi
 
