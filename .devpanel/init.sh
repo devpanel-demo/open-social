@@ -65,3 +65,6 @@ mysql -h$DB_HOST -P$DB_PORT -u$DB_USER -p$DB_PASSWORD $DB_NAME -e "show tables;"
 
 echo "Overwrite settings from site-install"
 sudo cp $APP_ROOT/.devpanel/drupal-settings.local.php $WEB_ROOT/sites/default/settings.local.php
+
+grep -qxF "include \$app_root . '/' . \$site_path . '/settings.local.php';" web/sites/default/settings.php || \
+echo -e "\nif (file_exists(\$app_root . '/' . \$site_path . '/settings.local.php')) {\n  include \$app_root . '/' . \$site_path . '/settings.local.php';\n}" >> web/sites/default/settings.php
