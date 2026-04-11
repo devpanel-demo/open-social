@@ -43,6 +43,7 @@ mkdir -p "$WEB_ROOT/sites/default/files" && chmod 775 "$WEB_ROOT/sites/default/f
 mkdir -p "$APP_ROOT/private" && chmod 775 "$APP_ROOT/private"
 
 sudo chown -R "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$APP_ROOT/private"
+sudo chown -R "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$WEB_ROOT/sites/default/files"
 
 #== Setup settings.php file
 sudo cp "$APP_ROOT/.devpanel/drupal-settings.php" "$SETTINGS_FILES_PATH"
@@ -57,26 +58,28 @@ echo 'Update permission ....'
 sudo chown www:www "$SETTINGS_FILES_PATH"
 sudo chmod 644 "$SETTINGS_FILES_PATH"
 
-echo "Listing tables init.sh"
-mysql -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -e "show tables;"
+#== Reset DB (CRITICAL)
+echo "Reset database..."
+mysql -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" -e "DROP DATABASE IF EXISTS ${DB_NAME}; CREATE DATABASE ${DB_NAME};"
 
-#== Drush Site Install
 echo "Site installing ..."
 cd "$APP_ROOT"
-# Disable cron to avoid activity queue crashes during install
-export DRUSH_OPTIONS_URI=http://default
 
-"$DRUSH" -y site:install social --account-name=devpanel --account-pass=devpanel --site-name="Open Social" --no-interaction
+"$DRUSH" -y site:install social \
+  --account-name=devpanel \
+  --account-pass=devpanel \
+  --site-name="Open Social" \
+  --no-interaction \
+  --verbose
 
-# Disable modules causing install-time crashes
-"$DRUSH" pm:uninstall activity_creator -y || true
-"$DRUSH" pm:uninstall social_event -y || true
+# Fix broken module only
+"$DRUSH" pm:uninstall activity_send_email -y || true
 
-# Ensure default login works.
+# Ensure login works
 "$DRUSH" user:password devpanel devpanel || true
 "$DRUSH" user:unblock devpanel || true
 
-# Clear failed login throttling / IP flood locks.
+# Clear flood locks
 "$DRUSH" sql:query "TRUNCATE flood;"
 
 "$DRUSH" cr
