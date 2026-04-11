@@ -1,4 +1,3 @@
-version: "3.3"
 services:
   drupal:
     image: vinugawade/open-social:latest
