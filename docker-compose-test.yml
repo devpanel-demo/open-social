@@ -1,0 +1,43 @@
+version: "3.3"
+services:
+  drupal:
+    image: devpanel/open-social:main
+    platform: linux/x86_64
+    ports:
+      - "80:80"
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      APP_ROOT: /var/www/html
+      WEB_ROOT: /var/www/html/web
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: 1
+      DB_NAME: drupal_db
+      DB_PORT: "3306"
+      DB_DRIVER: mysql
+      CODES_ENABLE: "yes"
+      CODES_PORT: "8080"
+      CODES_WORKING_DIR: /var/www/html
+      CODES_AUTH: "no"
+      PASSWORD: ""
+      APACHE_RUN_USER: www
+      APACHE_RUN_GROUP: www
+    volumes:
+      - drupal_data:/var/www/html/
+    command: []
+
+  db:
+    image: mysql:8
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: drupal_db
+      MYSQL_ROOT_PASSWORD: 1
+    volumes:
+      - db_data:/var/lib/mysql/
+volumes:
+  drupal_data:
+  db_data:
