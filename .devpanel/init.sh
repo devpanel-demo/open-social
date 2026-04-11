@@ -35,7 +35,10 @@ if [[ -f "$WEB_ROOT/composer.json" ]]; then
   cd "$WEB_ROOT" && composer install
 fi
 
-cd "$WEB_ROOT" && git submodule update --init --recursive
+if [ -d "$APP_ROOT/.git" ]; then
+  cd "$WEB_ROOT" && git submodule update --init --recursive
+fi
+
 mkdir -p "$WEB_ROOT/sites/default/files" && chmod 775 "$WEB_ROOT/sites/default/files"
 mkdir -p "$APP_ROOT/private" && chmod 775 "$APP_ROOT/private"
 
