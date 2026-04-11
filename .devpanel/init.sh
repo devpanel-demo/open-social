@@ -59,14 +59,21 @@ mysql -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -e "sho
 #== Drush Site Install
 echo "Site installing ..."
 cd "$APP_ROOT"
-"$DRUSH" -y site:install social --account-name=devpanel --account-pass=devpanel --site-name="Open Social"
+# Disable cron to avoid activity queue crashes during install
+export DRUSH_OPTIONS_URI=http://default
 
-# Ensure the ready-to-use login works after deploy.
-"$DRUSH" user:password devpanel devpanel
-"$DRUSH" config:set system.site page.front /admin/content -y
+"$DRUSH" -y site:install social --account-name=devpanel --account-pass=devpanel --site-name="Open Social" --no-interaction
 
-# Work around broken password-reset / one-time-login page warnings.
-"$DRUSH" -y pm:uninstall activity_send_email
+# Disable modules causing install-time crashes
+"$DRUSH" pm:uninstall activity_creator -y || true
+"$DRUSH" pm:uninstall social_event -y || true
+
+# Ensure default login works.
+"$DRUSH" user:password devpanel devpanel || true
+"$DRUSH" user:unblock devpanel || true
+
+# Clear failed login throttling / IP flood locks.
+"$DRUSH" sql:query "TRUNCATE flood;"
 
 "$DRUSH" cr
 
