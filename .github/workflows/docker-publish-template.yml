@@ -54,9 +54,9 @@ jobs:
       solr:
         image: solr:8
         ports:
-          - 8983:8983
-        command: >-
-          bash -c "solr-precreate social && solr-foreground"
+          - "8983:8983"
+        command: >
+          bash -c "solr-precreate drupal && solr-foreground"
         options: >-
           --health-cmd="bash -c 'nc -z localhost 8983'"
           --health-interval=10s
