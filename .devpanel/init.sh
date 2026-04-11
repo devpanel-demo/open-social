@@ -84,5 +84,8 @@ cd "$APP_ROOT"
 echo "Overwrite settings from site-install"
 sudo cp "$APP_ROOT/.devpanel/drupal-settings.local.php" "$WEB_ROOT/sites/default/settings.local.php"
 
-grep -qxF "include \$app_root . '/' . \$site_path . '/settings.local.php';" web/sites/default/settings.php || \
-echo -e "\nif (file_exists(\$app_root . '/' . \$site_path . '/settings.local.php')) {\n  include \$app_root . '/' . \$site_path . '/settings.local.php';\n}" >> web/sites/default/settings.php
+grep -qxF "include \$app_root . '/' . \$site_path . '/settings.local.php';" "$WEB_ROOT/sites/default/settings.php" || \
+echo -e "\nif (file_exists(\$app_root . '/' . \$site_path . '/settings.local.php')) {\n  include \$app_root . '/' . \$site_path . '/settings.local.php';\n}" | sudo tee -a "$WEB_ROOT/sites/default/settings.php" > /dev/null
+
+sudo chown www:www "$WEB_ROOT/sites/default/settings.php" "$WEB_ROOT/sites/default/settings.local.php"
+sudo chmod 644 "$WEB_ROOT/sites/default/settings.php" "$WEB_ROOT/sites/default/settings.local.php"
