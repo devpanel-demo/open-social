@@ -1,6 +1,6 @@
 services:
   drupal:
-    image: vinugawade/open-social:main
+    image: vinugawade/open-social:latest
     platform: linux/x86_64
     ports:
       - "80:80"
