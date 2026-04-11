@@ -1,3 +1,4 @@
+version: "3.3"
 services:
   drupal:
     image: vinugawade/open-social:latest
@@ -7,6 +8,7 @@ services:
       - "8080:8080"
     depends_on:
       - db
+      - solr
     environment:
       APP_ROOT: /var/www/html
       WEB_ROOT: /var/www/html/web
@@ -25,7 +27,6 @@ services:
       APACHE_RUN_GROUP: www
     volumes:
       - drupal_data:/var/www/html/
-    command: []
 
   db:
     image: mysql:8
@@ -37,6 +38,16 @@ services:
       MYSQL_ROOT_PASSWORD: 1
     volumes:
       - db_data:/var/lib/mysql/
+
+  solr:
+    image: solr:8
+    restart: always
+    ports:
+      - "8983:8983"
+    command:
+      - solr-precreate
+      - social
+
 volumes:
   drupal_data:
   db_data:
