@@ -50,7 +50,6 @@ sudo sed -i -e "s/^\$settings\['hash_salt'\].*/\$settings\['hash_salt'\] = '$DRU
 
 #== Update permission
 echo 'Update permission ....'
-# sudo chown -R $APACHE_RUN_USER:$APACHE_RUN_GROUP $STATIC_FILES_PATH
 sudo chown www:www "$SETTINGS_FILES_PATH"
 sudo chmod 644 "$SETTINGS_FILES_PATH"
 
@@ -61,6 +60,11 @@ mysql -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -e "sho
 echo "Site installing ..."
 cd "$APP_ROOT"
 "$DRUSH" -y site:install social --account-name=devpanel --account-pass=devpanel --site-name="Open Social"
+
+# Ensure the ready-to-use login works after deploy.
+"$DRUSH" user:password devpanel devpanel
+"$DRUSH" config:set system.site page.front /admin/content -y
+
 "$DRUSH" cr
 
 echo "Overwrite settings from site-install"
