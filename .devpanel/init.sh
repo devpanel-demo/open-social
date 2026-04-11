@@ -79,9 +79,6 @@ cd "$APP_ROOT"
 "$DRUSH" user:password devpanel devpanel || true
 "$DRUSH" user:unblock devpanel || true
 
-# Clear flood locks
-"$DRUSH" sql:query "TRUNCATE flood;"
-
 "$DRUSH" cr
 
 echo "Overwrite settings from site-install"
