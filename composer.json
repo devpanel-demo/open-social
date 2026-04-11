@@ -76,6 +76,11 @@
                 "type:drupal-custom-theme"
             ]
         },
+        "patches": {
+            "goalgorilla/open_social": {
+                "Add fixes": ".devpanel/patch/goalgorilla/open_social/profile-module-install-order.patch"
+            }
+        },
         "drupal-core-project-message": {
             "include-keys": [
                 "homepage",

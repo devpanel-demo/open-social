@@ -1,0 +1,25 @@
+diff --git a/social.info.yml b/social.info.yml
+index e333c24..5126c55 100644
+--- a/social.info.yml
++++ b/social.info.yml
+@@ -29,8 +29,11 @@ install:
+   # Open Social
+   - social:social_comment
+   - social:social_editor
+-  - social:social_event
++
++  # MUST come before event modules
+   - social:social_follow_content
++
++  - social:social_event
+   - social:social_font
+   - social:social_footer
+   - social:social_group_gvbo
+@@ -49,6 +52,7 @@ install:
+   - social:social_event_invite
+   - social:social_advanced_queue
+   - social:social_emoji
++
+   # Contrib
+   - ultimate_cron:ultimate_cron
+ 
