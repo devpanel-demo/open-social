@@ -67,3 +67,4 @@
 /lost+found
 /.vscode
 /private
+.DS_Store
