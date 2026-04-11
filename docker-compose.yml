@@ -1,7 +1,7 @@
 version: "3.3"
 services:
   drupal:
-    image: devpanel/open-social:main
+    image: vinugawade/open-social:main
     platform: linux/x86_64
     ports:
       - "80:80"
