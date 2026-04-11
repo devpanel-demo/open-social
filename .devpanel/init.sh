@@ -65,6 +65,9 @@ cd "$APP_ROOT"
 "$DRUSH" user:password devpanel devpanel
 "$DRUSH" config:set system.site page.front /admin/content -y
 
+# Work around broken password-reset / one-time-login page warnings.
+"$DRUSH" -y pm:uninstall activity_send_email
+
 "$DRUSH" cr
 
 echo "Overwrite settings from site-install"
