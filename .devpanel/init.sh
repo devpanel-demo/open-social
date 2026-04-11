@@ -17,6 +17,7 @@
 
 STATIC_FILES_PATH="$WEB_ROOT/sites/default/files"
 SETTINGS_FILES_PATH="$WEB_ROOT/sites/default/settings.php"
+DRUSH="$APP_ROOT/vendor/bin/drush"
 
 if [[ ! -n "$APACHE_RUN_USER" ]]; then
   export APACHE_RUN_USER=www-data
@@ -27,46 +28,43 @@ fi
 
 #== Composer install.
 if [[ -f "$APP_ROOT/composer.json" ]]; then
-  cd $APP_ROOT && composer install;
+  cd "$APP_ROOT" && composer install
 fi
 if [[ -f "$WEB_ROOT/composer.json" ]]; then
-  cd $WEB_ROOT && composer install;
+  cd "$WEB_ROOT" && composer install
 fi
 
-cd $WEB_ROOT && git submodule update --init --recursive
-mkdir -p $WEB_ROOT/sites/default/files && chmod 775 $WEB_ROOT/sites/default/files
-mkdir -p $APP_ROOT/private && chmod 775 $APP_ROOT/private
+cd "$WEB_ROOT" && git submodule update --init --recursive
+mkdir -p "$WEB_ROOT/sites/default/files" && chmod 775 "$WEB_ROOT/sites/default/files"
+mkdir -p "$APP_ROOT/private" && chmod 775 "$APP_ROOT/private"
 
-sudo chown -R $APACHE_RUN_USER:$APACHE_RUN_GROUP $APP_ROOT/private
+sudo chown -R "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$APP_ROOT/private"
+
 #== Setup settings.php file
-sudo cp $APP_ROOT/.devpanel/drupal-settings.php $SETTINGS_FILES_PATH
+sudo cp "$APP_ROOT/.devpanel/drupal-settings.php" "$SETTINGS_FILES_PATH"
+
 #== Generate hash salt
 echo 'Generate hash salt ...'
-DRUPAL_HASH_SALT=$(openssl rand -hex 32);
-sudo sed -i -e "s/^\$settings\['hash_salt'\].*/\$settings\['hash_salt'\] = '$DRUPAL_HASH_SALT';/g" $SETTINGS_FILES_PATH
+DRUPAL_HASH_SALT=$(openssl rand -hex 32)
+sudo sed -i -e "s/^\$settings\['hash_salt'\].*/\$settings\['hash_salt'\] = '$DRUPAL_HASH_SALT';/g" "$SETTINGS_FILES_PATH"
 
 #== Update permission
 echo 'Update permission ....'
-vendor/bin/drush cr
 # sudo chown -R $APACHE_RUN_USER:$APACHE_RUN_GROUP $STATIC_FILES_PATH
-sudo chown www:www $SETTINGS_FILES_PATH
-sudo chmod 644 $SETTINGS_FILES_PATH
+sudo chown www:www "$SETTINGS_FILES_PATH"
+sudo chmod 644 "$SETTINGS_FILES_PATH"
 
 echo "Listing tables init.sh"
-mysql -h$DB_HOST -P$DB_PORT -u$DB_USER -p$DB_PASSWORD $DB_NAME -e "show tables;"
+mysql -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -e "show tables;"
 
 #== Drush Site Install
-# if [[ $(mysql -h$DB_HOST -P$DB_PORT -u$DB_USER -p$DB_PASSWORD $DB_NAME -e "show tables;") == '' ]]; then
-  echo "Site installing ..."
-  cd $APP_ROOT
-  vendor/bin/drush -y site-install social --account-name=devpanel --account-pass=devpanel --site-name="Open Social"
-  # --db-url=mysql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME
-  # --no-interaction
-  vendor/bin/drush cr
-# fi
+echo "Site installing ..."
+cd "$APP_ROOT"
+"$DRUSH" -y site:install social --account-name=devpanel --account-pass=devpanel --site-name="Open Social"
+"$DRUSH" cr
 
 echo "Overwrite settings from site-install"
-sudo cp $APP_ROOT/.devpanel/drupal-settings.local.php $WEB_ROOT/sites/default/settings.local.php
+sudo cp "$APP_ROOT/.devpanel/drupal-settings.local.php" "$WEB_ROOT/sites/default/settings.local.php"
 
 grep -qxF "include \$app_root . '/' . \$site_path . '/settings.local.php';" web/sites/default/settings.php || \
 echo -e "\nif (file_exists(\$app_root . '/' . \$site_path . '/settings.local.php')) {\n  include \$app_root . '/' . \$site_path . '/settings.local.php';\n}" >> web/sites/default/settings.php
