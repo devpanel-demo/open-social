@@ -15,3 +15,5 @@ $databases['default']['default'] = [
     'prefix' => '',
     'collation' => 'utf8mb4_general_ci',
 ];
+
+$settings['file_private_path'] = dirname($app_root) . '/private';

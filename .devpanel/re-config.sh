@@ -71,6 +71,10 @@ if [[ $(mysql -h$DB_HOST -P$DB_PORT -u$DB_USER -p$DB_PASSWORD $DB_NAME -e "show 
   fi
 fi
 
+# Ensure private files directory exists
+[[ ! -d $APP_ROOT/private ]] && sudo mkdir -p --mode 775 $APP_ROOT/private || sudo chmod 775 -R $APP_ROOT/private
+sudo chown -R $APACHE_RUN_USER:$APACHE_RUN_GROUP $APP_ROOT/private
+
 #== Update permission
 echo 'Update permission ....'
 drush cr

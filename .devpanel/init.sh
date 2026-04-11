@@ -34,8 +34,10 @@ if [[ -f "$WEB_ROOT/composer.json" ]]; then
 fi
 
 cd $WEB_ROOT && git submodule update --init --recursive
-mkdir $WEB_ROOT/sites/default/files && chmod 775 $WEB_ROOT/sites/default/files
-cd $APP_ROOT && mkdir -p private && chmod 775 private
+mkdir -p $WEB_ROOT/sites/default/files && chmod 775 $WEB_ROOT/sites/default/files
+mkdir -p $APP_ROOT/private && chmod 775 $APP_ROOT/private
+
+sudo chown -R $APACHE_RUN_USER:$APACHE_RUN_GROUP $APP_ROOT/private
 #== Setup settings.php file
 sudo cp $APP_ROOT/.devpanel/drupal-settings.php $SETTINGS_FILES_PATH
 #== Generate hash salt
