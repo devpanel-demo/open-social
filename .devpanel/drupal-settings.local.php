@@ -18,3 +18,4 @@ $databases['default']['default'] = [
 ];
 
 $settings['file_private_path'] = dirname($app_root) . '/private';
+$config['system.logging']['error_level'] = 'hide';
