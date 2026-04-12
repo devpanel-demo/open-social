@@ -757,7 +757,11 @@ $settings['entity_update_backup'] = TRUE;
 $settings['migrate_node_migrate_type_classic'] = FALSE;
 
 /**
- * There are some basic configuration created by DevPanel
+ * DevPanel runtime database configuration.
+ *
+ * Build and runtime containers read their database connection details from
+ * environment variables, which keeps this project portable across CI, local
+ * Docker/DevPanel runs, and deployed environments.
  */
 $databases['default']['default'] = [
     'database'        => getenv('DB_NAME'),

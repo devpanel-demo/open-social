@@ -14,6 +14,9 @@ set -euo pipefail
 # GNU Affero General Public License for more details.
 #
 # For GNU Affero General Public License see <https://www.gnu.org/licenses/>.
+
+# Export a reusable quickstart snapshot from the prepared build container.
+# The snapshot contains the Drupal database and public files only.
 # ----------------------------------------------------------------------
 
 echo -e "-------------------------------"
@@ -39,18 +42,18 @@ echo "Drush status"
 echo "Listing tables"
 mysql -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -e "show tables;"
 
-# Step 1 - Export Drupal database
+# Export the current database.
 echo "> Export database to $APP_DUMPS_DIR"
 "$DRUSH" cr --quiet
 
-# Use direct mariadb-dump for more reliable output in container/CI environments.
+# Direct mariadb-dump is more reliable than drush sql-dump in CI/container builds.
 mariadb-dump --skip-ssl \
   -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" \
   --no-tablespaces | gzip > "$APP_DUMPS_DIR/db.sql.gz"
 
 test -s "$APP_DUMPS_DIR/db.sql.gz"
 
-# Step 2 - Compress public files
+# Archive public files for runtime restore.
 echo "> Compress static files"
 tar czf "$DUMPS_DIR/files.tgz" -C "$STATIC_FILES_DIR" .
 
