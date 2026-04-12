@@ -66,13 +66,15 @@ services:
     restart: always
     ports:
       - "8983:8983"
-    command: >-
-      bash -c "solr-precreate social && solr-foreground"
+    command:
+      - solr-precreate
+      - drupal
+    # Mark Solr healthy only when the core endpoint responds.
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8983/solr/drupal/admin/ping || exit 1"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
-      retries: 10
+      retries: 20
 
 volumes:
   db_data:

@@ -44,8 +44,6 @@ echo "Linking npm assets to web/libraries..."
 rm -rf "$WEB_ROOT/libraries"
 mkdir -p "$WEB_ROOT"
 
-ln -s "$APP_ROOT/vendor/npm-asset" "$WEB_ROOT/libraries"
-
 mkdir -p "$WEB_ROOT/sites/default/files" && chmod 775 "$WEB_ROOT/sites/default/files"
 mkdir -p "$APP_ROOT/private" && chmod 775 "$APP_ROOT/private"
 
@@ -54,7 +52,7 @@ echo "Checking frontend libraries..."
 if [ -d "$APP_ROOT/vendor/npm-asset" ]; then
   echo "Linking vendor/npm-asset to web/libraries..."
   rm -rf "$WEB_ROOT/libraries"
-  ln -s "$APP_ROOT/vendor/npm-asset" "$WEB_ROOT/libraries"
+  sudo ln -s "$APP_ROOT/vendor/npm-asset" "$WEB_ROOT/libraries"
 elif [ -d "$WEB_ROOT/libraries" ]; then
   echo "Libraries already exist in $WEB_ROOT/libraries, skipping symlink."
 else
