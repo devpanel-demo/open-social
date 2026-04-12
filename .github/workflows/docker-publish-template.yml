@@ -113,28 +113,28 @@ jobs:
             echo "Cleaning container before commit..."
 
             # Composer cache
-            rm -rf /root/.composer/cache || true
-            rm -rf /var/www/.composer/cache || true
+            sudo rm -rf /root/.composer/cache || true
+            sudo rm -rf /var/www/.composer/cache || true
 
             # Apt cache
             apt-get clean || true
-            rm -rf /var/lib/apt/lists/* || true
+            sudo rm -rf /var/lib/apt/lists/* || true
 
             # Logs
-            rm -rf /var/log/* || true
+            sudo rm -rf /var/log/* || true
 
             # Temp
-            rm -rf /tmp/* || true
+            sudo rm -rf /tmp/* || true
 
             # Git
-            rm -rf /var/www/html/.git || true
+            sudo rm -rf /var/www/html/.git || true
 
             # Node/npm junk if any
-            rm -rf /var/www/html/node_modules || true
+            sudo rm -rf /var/www/html/node_modules || true
 
             # Drupal cache dirs
-            rm -rf /var/www/html/web/sites/default/files/php || true
-            rm -rf /var/www/html/web/sites/default/files/styles || true
+            sudo rm -rf /var/www/html/web/sites/default/files/php || true
+            sudo rm -rf /var/www/html/web/sites/default/files/styles || true
 
             # Keep only needed dumps
             find /var/www/html/.devpanel/dumps -type f ! -name "*.gz" -delete || true
