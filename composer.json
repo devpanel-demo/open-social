@@ -78,7 +78,7 @@
         },
         "patches": {
             "goalgorilla/open_social": {
-                "Add fixes": ".devpanel/patch/goalgorilla/open_social/profile-module-install-order.patch"
+                "Add open social profile module installation fixes": ".devpanel/patch/goalgorilla/open_social/profile-module-install-order.patch"
             }
         },
         "drupal-core-project-message": {
