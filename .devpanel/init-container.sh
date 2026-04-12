@@ -1,5 +1,6 @@
 #!/bin/bash
-set -euo pipefail--------------------------------------
+set -euo pipefail
+# ---------------------------------------------------------------------
 # Copyright (C) 2025 DevPanel
 #
 # This program is free software: you can redistribute it and/or modify
