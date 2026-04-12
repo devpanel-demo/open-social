@@ -68,3 +68,4 @@
 /.vscode
 /private
 .DS_Store
+web/libraries/*

@@ -66,9 +66,8 @@ services:
     restart: always
     ports:
       - "8983:8983"
-    command:
-      - solr-precreate
-      - drupal
+    command: >-
+      bash -c "solr-precreate social && solr-foreground"
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8983/solr/drupal/admin/ping || exit 1"]
       interval: 5s

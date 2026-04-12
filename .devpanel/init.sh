@@ -39,9 +39,17 @@ if [ -d "$APP_ROOT/.git" ]; then
   cd "$WEB_ROOT" && git submodule update --init --recursive
 fi
 
+echo "Linking npm assets to web/libraries..."
+
+rm -rf "$WEB_ROOT/libraries"
+mkdir -p "$WEB_ROOT"
+
+ln -s "$APP_ROOT/vendor/npm-asset" "$WEB_ROOT/libraries"
+
 mkdir -p "$WEB_ROOT/sites/default/files" && chmod 775 "$WEB_ROOT/sites/default/files"
 mkdir -p "$APP_ROOT/private" && chmod 775 "$APP_ROOT/private"
 
+sudo chown -R "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$APP_ROOT/vendor/npm-asset"
 sudo chown -R "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$APP_ROOT/private"
 sudo chown -R "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$WEB_ROOT/sites/default/files"
 

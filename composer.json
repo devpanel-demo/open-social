@@ -20,8 +20,30 @@
     ],
     "require": {
         "composer/installers": "^2.0",
+        "drupal/jquery_ui": "^1.7",
+        "drupal/jquery_ui_draggable": "^2.0",
+        "drupal/jquery_ui_resizable": "^2.0",
         "drush/drush": "^13.7",
-        "goalgorilla/open_social": "13.0.0"
+        "goalgorilla/open_social": "13.0.0",
+        "npm-asset/autosize": "*",
+        "npm-asset/bootstrap": "*",
+        "npm-asset/d3": "*",
+        "npm-asset/diff": "*",
+        "npm-asset/emoji-picker-element": "*",
+        "npm-asset/jquery-ui-touch-punch": "*",
+        "npm-asset/jquery.caret": "*",
+        "npm-asset/lazysizes": "*",
+        "npm-asset/morris.js06": "*",
+        "npm-asset/node-waves": "*",
+        "npm-asset/photoswipe": "*",
+        "npm-asset/raphael": "*",
+        "npm-asset/react": "*",
+        "npm-asset/react-dom": "*",
+        "npm-asset/select2": "*",
+        "npm-asset/shariff": "*",
+        "npm-asset/slick-carousel": "*",
+        "npm-asset/tablesaw": "*",
+        "oomphinc/composer-installers-extender": "^2.0"
     },
     "conflict": {
         "drupal/drupal": "*"
@@ -47,12 +69,70 @@
                 "web-root": "web/"
             }
         },
+        "installer-types": [
+            "npm-asset"
+        ],
         "installer-paths": {
+            "web/libraries/{$name}": [
+                "type:drupal-library",
+                "type:npm-asset"
+            ],
             "web/core": [
                 "type:drupal-core"
             ],
-            "web/libraries/{$name}": [
-                "type:drupal-library"
+            "web/libraries/select2": [
+                "npm-asset/select2"
+            ],
+            "web/libraries/autosize": [
+                "npm-asset/autosize"
+            ],
+            "web/libraries/bootstrap": [
+                "npm-asset/bootstrap"
+            ],
+            "web/libraries/d3": [
+                "npm-asset/d3"
+            ],
+            "web/libraries/diff": [
+                "npm-asset/diff"
+            ],
+            "web/libraries/emoji-picker-element": [
+                "npm-asset/emoji-picker-element"
+            ],
+            "web/libraries/jquery-ui-touch-punch": [
+                "npm-asset/jquery-ui-touch-punch"
+            ],
+            "web/libraries/jquery.caret": [
+                "npm-asset/jquery.caret"
+            ],
+            "web/libraries/lazysizes": [
+                "npm-asset/lazysizes"
+            ],
+            "web/libraries/morris.js06": [
+                "npm-asset/morris.js06"
+            ],
+            "web/libraries/node-waves": [
+                "npm-asset/node-waves"
+            ],
+            "web/libraries/photoswipe": [
+                "npm-asset/photoswipe"
+            ],
+            "web/libraries/raphael": [
+                "npm-asset/raphael"
+            ],
+            "web/libraries/react": [
+                "npm-asset/react"
+            ],
+            "web/libraries/react-dom": [
+                "npm-asset/react-dom"
+            ],
+            "web/libraries/shariff": [
+                "npm-asset/shariff"
+            ],
+            "web/libraries/slick-carousel": [
+                "npm-asset/slick-carousel"
+            ],
+            "web/libraries/tablesaw": [
+                "npm-asset/tablesaw"
             ],
             "web/modules/contrib/{$name}": [
                 "type:drupal-module"
