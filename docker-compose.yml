@@ -24,10 +24,19 @@ services:
       PASSWORD: ""
       APACHE_RUN_USER: www
       APACHE_RUN_GROUP: www
+      SOLR_HOST: solr
+      SOLR_PORT: 8983
+    command: >
+      bash -lc "cd /var/www/html &&
+      if [ -f .devpanel/init-container.sh ]; then bash .devpanel/init-container.sh; fi &&
+      exec apache2-foreground"
+    volumes:
+      - drupal_data:/var/www/html/
 
   db:
     image: mysql:8
     restart: always
+    command: --transaction-isolation=REPEATABLE-READ
     ports:
       - "3306:3306"
     environment:
@@ -46,4 +55,5 @@ services:
       - drupal
 
 volumes:
+  drupal_data:
   db_data:

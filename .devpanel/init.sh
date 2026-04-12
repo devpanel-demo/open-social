@@ -72,9 +72,6 @@ cd "$APP_ROOT"
   --no-interaction \
   --verbose
 
-# Fix broken module only
-"$DRUSH" pm:uninstall activity_send_email -y || true
-
 # Ensure login works
 "$DRUSH" user:password devpanel devpanel || true
 "$DRUSH" user:unblock devpanel || true
