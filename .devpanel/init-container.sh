@@ -23,45 +23,62 @@ echo "=== DevPanel Runtime Init ==="
 DUMP_DB="$APP_ROOT/.devpanel/dumps/db.sql.gz"
 DUMP_FILES="$APP_ROOT/.devpanel/dumps/files.tgz"
 FILES_DIR="$WEB_ROOT/sites/default/files"
+DRUSH="$APP_ROOT/vendor/bin/drush"
 
+# -------------------------------
 # Wait for MySQL
+# -------------------------------
 echo "Waiting for MySQL..."
 for i in $(seq 1 60); do
   mysqladmin ping -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" --silent && break
   sleep 2
 done
 
-# Check if DB has tables
+# -------------------------------
+# Check if DB is empty
+# -------------------------------
 TABLE_COUNT=$(mysql -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -e "SHOW TABLES;" | wc -l)
 
 if [ "$TABLE_COUNT" -le 1 ]; then
-  echo "Database empty → importing dump"
+  echo "Database empty → restoring snapshot"
 
+  # -------------------------------
+  # Import DB
+  # -------------------------------
   if [ -f "$DUMP_DB" ]; then
+    echo "Importing DB..."
     gunzip -c "$DUMP_DB" | mysql -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME"
   else
-    echo "⚠️ No DB dump found, skipping"
+    echo "⚠️ DB dump missing → skipping"
   fi
-else
-  echo "Database already populated → skipping import"
-fi
 
-# Restore files
-if [ ! -d "$FILES_DIR" ] || [ -z "$(ls -A "$FILES_DIR")" ]; then
-  echo "Restoring public files..."
-
+  # -------------------------------
+  # Restore files (IMPORTANT FIX)
+  # Always restore when DB is fresh
+  # -------------------------------
+  echo "Restoring files..."
+  rm -rf "$FILES_DIR"
   mkdir -p "$FILES_DIR"
 
   if [ -f "$DUMP_FILES" ]; then
     tar xzf "$DUMP_FILES" -C "$FILES_DIR"
   else
-    echo "⚠️ No files dump found, skipping"
+    echo "⚠️ files.tgz missing → skipping"
   fi
+
 else
-  echo "Files already exist → skipping restore"
+  echo "Database already populated → skipping restore"
 fi
 
+# -------------------------------
 # Fix permissions
+# -------------------------------
 chown -R "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$FILES_DIR"
+
+# -------------------------------
+# Clear Drupal cache (safe)
+# -------------------------------
+echo "Rebuilding cache..."
+$DRUSH cr || true
 
 echo "Runtime init complete"
