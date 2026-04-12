@@ -49,7 +49,19 @@ ln -s "$APP_ROOT/vendor/npm-asset" "$WEB_ROOT/libraries"
 mkdir -p "$WEB_ROOT/sites/default/files" && chmod 775 "$WEB_ROOT/sites/default/files"
 mkdir -p "$APP_ROOT/private" && chmod 775 "$APP_ROOT/private"
 
-sudo chown -R "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$APP_ROOT/vendor/npm-asset"
+echo "Checking frontend libraries..."
+
+if [ -d "$APP_ROOT/vendor/npm-asset" ]; then
+  echo "Linking vendor/npm-asset to web/libraries..."
+  rm -rf "$WEB_ROOT/libraries"
+  ln -s "$APP_ROOT/vendor/npm-asset" "$WEB_ROOT/libraries"
+elif [ -d "$WEB_ROOT/libraries" ]; then
+  echo "Libraries already exist in $WEB_ROOT/libraries, skipping symlink."
+else
+  echo "No npm asset source directory found."
+  find "$APP_ROOT" -maxdepth 4 \( -type d -name select2 -o -type d -name autosize \) || true
+fi
+
 sudo chown -R "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$APP_ROOT/private"
 sudo chown -R "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$WEB_ROOT/sites/default/files"
 
