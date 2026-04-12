@@ -39,26 +39,29 @@ if [ -d "$APP_ROOT/.git" ]; then
   cd "$WEB_ROOT" && git submodule update --init --recursive
 fi
 
-echo "Linking npm assets to web/libraries..."
-
-rm -rf "$WEB_ROOT/libraries"
 mkdir -p "$WEB_ROOT"
-
 mkdir -p "$WEB_ROOT/sites/default/files" && chmod 775 "$WEB_ROOT/sites/default/files"
 mkdir -p "$APP_ROOT/private" && chmod 775 "$APP_ROOT/private"
 
-echo "Checking frontend libraries..."
+echo "Linking frontend libraries..."
+
+if [ -L "$WEB_ROOT/libraries" ] || [ -d "$WEB_ROOT/libraries" ]; then
+  rm -rf "$WEB_ROOT/libraries"
+fi
 
 if [ -d "$APP_ROOT/vendor/npm-asset" ]; then
-  echo "Linking vendor/npm-asset to web/libraries..."
-  rm -rf "$WEB_ROOT/libraries"
-  sudo ln -s "$APP_ROOT/vendor/npm-asset" "$WEB_ROOT/libraries"
-elif [ -d "$WEB_ROOT/libraries" ]; then
-  echo "Libraries already exist in $WEB_ROOT/libraries, skipping symlink."
+  ln -s "$APP_ROOT/vendor/npm-asset" "$WEB_ROOT/libraries"
+  echo "Linked $WEB_ROOT/libraries -> $APP_ROOT/vendor/npm-asset"
 else
-  echo "No npm asset source directory found."
-  find "$APP_ROOT" -maxdepth 4 \( -type d -name select2 -o -type d -name autosize \) || true
+  echo "ERROR: $APP_ROOT/vendor/npm-asset not found"
+  find "$APP_ROOT/vendor" -maxdepth 2 -type d -name "npm-asset" || true
+  exit 1
 fi
+
+echo "Verifying frontend libraries..."
+[ -d "$WEB_ROOT/libraries/select2" ] && echo "select2 library found." || echo "select2 library missing."
+[ -d "$WEB_ROOT/libraries/autosize" ] && echo "autosize library found." || echo "autosize library missing."
+[ -d "$WEB_ROOT/libraries/nouislider" ] && echo "nouislider library found." || echo "nouislider library missing."
 
 sudo chown -R "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$APP_ROOT/private"
 sudo chown -R "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$WEB_ROOT/sites/default/files"
