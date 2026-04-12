@@ -109,6 +109,38 @@ jobs:
 
           echo "DUMPS DATABASE + STATIC FILE"
           docker exec ${{ job.services.webserver.id }} bash -c "cd \"\$APP_ROOT\" && bash .devpanel/create_quickstart.sh"
+          docker exec ${{ job.services.webserver.id }} bash -c '
+            echo "Cleaning container before commit..."
+
+            # Composer cache
+            rm -rf /root/.composer/cache || true
+            rm -rf /var/www/.composer/cache || true
+
+            # Apt cache
+            apt-get clean || true
+            rm -rf /var/lib/apt/lists/* || true
+
+            # Logs
+            rm -rf /var/log/* || true
+
+            # Temp
+            rm -rf /tmp/* || true
+
+            # Git
+            rm -rf /var/www/html/.git || true
+
+            # Node/npm junk if any
+            rm -rf /var/www/html/node_modules || true
+
+            # Drupal cache dirs
+            rm -rf /var/www/html/web/sites/default/files/php || true
+            rm -rf /var/www/html/web/sites/default/files/styles || true
+
+            # Keep only needed dumps
+            find /var/www/html/.devpanel/dumps -type f ! -name "*.gz" -delete || true
+
+            echo "Cleanup done."
+            '
 
       - name: Login to Docker Hub
         uses: docker/login-action@v4
