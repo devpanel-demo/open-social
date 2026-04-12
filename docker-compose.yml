@@ -18,7 +18,7 @@ services:
     image: vinugawade/open-social:latest
     platform: linux/x86_64
     ports:
-      - "8081:80"
+      - "80:80"
       - "8080:8080"
     depends_on:
       db:
@@ -43,10 +43,42 @@ services:
       APACHE_RUN_GROUP: www
       SOLR_HOST: solr
       SOLR_PORT: 8983
-
-    # For a published/prebuilt image, run the init script on startup.
-    # This should prepare the container for local testing, then start Apache.
     command: >
       bash -lc "cd /var/www/html &&
       if [ -f .devpanel/init-container.sh ]; then bash .devpanel/init-container.sh; fi &&
-      exec apache2-foreground"
+      sudo rm -f /var/run/apache2/apache2.pid 2>/dev/null || true &&
+      exec sudo apache2-foreground"
+
+  db:
+    image: mysql:8
+    restart: always
+    command: --transaction-isolation=REPEATABLE-READ
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: drupal_db
+      MYSQL_ROOT_PASSWORD: 1
+    volumes:
+      - db_data:/var/lib/mysql/
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  solr:
+    image: solr:8
+    restart: always
+    ports:
+      - "8983:8983"
+    command:
+      - solr-precreate
+      - drupal
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8983/solr/drupal/admin/ping || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  db_data:

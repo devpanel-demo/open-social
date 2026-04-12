@@ -15,10 +15,8 @@ set -euo pipefail
 #
 # For GNU Affero General Public License see <https://www.gnu.org/licenses/>.
 # ----------------------------------------------------------------------
-
 #== Import database
-
-echo "=== DevPanel Runtime Init ==="
+echo "=== DevPanel runtime init ==="
 
 DUMP_DB="$APP_ROOT/.devpanel/dumps/db.sql.gz"
 DUMP_FILES="$APP_ROOT/.devpanel/dumps/files.tgz"
@@ -57,7 +55,7 @@ if [ "$TABLE_COUNT" -le 1 ]; then
   # Always restore when DB is fresh
   # -------------------------------
   echo "Restoring files..."
-  sudo rm -rf "$FILES_DIR"
+  sudo rm -rf "$FILES_DIR" || true
   sudo mkdir -p "$FILES_DIR"
 
   if [ -f "$DUMP_FILES" ]; then

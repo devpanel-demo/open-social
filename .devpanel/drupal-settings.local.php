@@ -14,7 +14,7 @@ $databases['default']['default'] = [
     'driver'          => getenv('DB_DRIVER'),
     'prefix'          => '',
     'collation'       => 'utf8mb4_general_ci',
-    'isolation_level' => 'READ COMMITTED',
+    'isolation_level' => 'REPEATABLE READ',
 ];
 
 $settings['file_private_path'] = dirname($app_root) . '/private';
