@@ -43,19 +43,25 @@ mkdir -p "$WEB_ROOT"
 mkdir -p "$WEB_ROOT/sites/default/files" && chmod 775 "$WEB_ROOT/sites/default/files"
 mkdir -p "$APP_ROOT/private" && chmod 775 "$APP_ROOT/private"
 
-echo "Linking frontend libraries..."
+echo "Checking frontend libraries..."
 
-if [ -L "$WEB_ROOT/libraries" ] || [ -d "$WEB_ROOT/libraries" ]; then
-  rm -rf "$WEB_ROOT/libraries"
-fi
-
-if [ -d "$APP_ROOT/vendor/npm-asset" ]; then
+# If Composer already installed libraries into web/libraries, keep them.
+if [ -d "$WEB_ROOT/libraries/select2" ]; then
+  echo "Libraries already installed in $WEB_ROOT/libraries."
+# Otherwise, if vendor/npm-asset exists, create a symlink.
+elif [ -d "$APP_ROOT/vendor/npm-asset" ]; then
+  echo "Linking $APP_ROOT/vendor/npm-asset to $WEB_ROOT/libraries..."
+  if [ -L "$WEB_ROOT/libraries" ]; then
+    rm -f "$WEB_ROOT/libraries"
+  elif [ -d "$WEB_ROOT/libraries" ]; then
+    rm -rf "$WEB_ROOT/libraries"
+  fi
   ln -s "$APP_ROOT/vendor/npm-asset" "$WEB_ROOT/libraries"
-  echo "Linked $WEB_ROOT/libraries -> $APP_ROOT/vendor/npm-asset"
+# Otherwise, show debug info but do not hard-fail immediately.
 else
-  echo "ERROR: $APP_ROOT/vendor/npm-asset not found"
-  find "$APP_ROOT/vendor" -maxdepth 2 -type d -name "npm-asset" || true
-  exit 1
+  echo "No libraries found in $WEB_ROOT/libraries and no $APP_ROOT/vendor/npm-asset directory found."
+  echo "Debugging library locations..."
+  find "$APP_ROOT" -maxdepth 5 -type d \( -name select2 -o -name autosize -o -name nouislider \) || true
 fi
 
 echo "Verifying frontend libraries..."
