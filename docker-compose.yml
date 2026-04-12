@@ -1,6 +1,6 @@
 services:
   drupal:
-    image: vinugawade/open-social:latest
+    image: vinugawade/open-social:main
     platform: linux/x86_64
     ports:
       - "80:80"
@@ -24,8 +24,6 @@ services:
       PASSWORD: ""
       APACHE_RUN_USER: www
       APACHE_RUN_GROUP: www
-    volumes:
-      - drupal_data:/var/www/html/
 
   db:
     image: mysql:8
@@ -45,8 +43,7 @@ services:
       - "8983:8983"
     command:
       - solr-precreate
-      - social
+      - drupal
 
 volumes:
-  drupal_data:
   db_data:
