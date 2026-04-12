@@ -112,31 +112,28 @@ jobs:
           docker exec ${{ job.services.webserver.id }} bash -c '
             echo "Cleaning container before commit..."
 
-            # Composer cache
-            sudo rm -rf /root/.composer/cache || true
-            sudo rm -rf /var/www/.composer/cache || true
+            # Switch to root for system cleanup
+            sudo bash -c "
+              apt-get clean || true
+              rm -rf /var/lib/apt/lists/* || true
+              rm -rf /var/cache/apt/* || true
+            "
 
-            # Apt cache
-            apt-get clean || true
-            sudo rm -rf /var/lib/apt/lists/* || true
+            # Back to normal user cleanup
+            rm -rf /root/.composer/cache || true
+            rm -rf /var/www/.composer/cache || true
 
-            # Logs
-            sudo rm -rf /var/log/* || true
+            rm -rf /var/log/* || true
+            rm -rf /tmp/* || true
 
-            # Temp
-            sudo rm -rf /tmp/* || true
+            rm -rf /var/www/html/.git || true
+            rm -rf /var/www/html/node_modules || true
 
-            # Git
-            sudo rm -rf /var/www/html/.git || true
+            # Drupal runtime junk
+            rm -rf /var/www/html/web/sites/default/files/php || true
+            rm -rf /var/www/html/web/sites/default/files/styles || true
 
-            # Node/npm junk if any
-            sudo rm -rf /var/www/html/node_modules || true
-
-            # Drupal cache dirs
-            sudo rm -rf /var/www/html/web/sites/default/files/php || true
-            sudo rm -rf /var/www/html/web/sites/default/files/styles || true
-
-            # Keep only needed dumps
+            # Keep only compressed dumps
             find /var/www/html/.devpanel/dumps -type f ! -name "*.gz" -delete || true
 
             echo "Cleanup done."
