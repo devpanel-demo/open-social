@@ -43,11 +43,6 @@ services:
       APACHE_RUN_GROUP: www
       SOLR_HOST: solr
       SOLR_PORT: 8983
-    command: >
-      bash -lc "cd /var/www/html &&
-      if [ -f .devpanel/init-container.sh ]; then bash .devpanel/init-container.sh; fi &&
-      sudo rm -f /var/run/apache2/apache2.pid 2>/dev/null || true &&
-      exec sudo apache2-foreground"
 
   db:
     image: mysql:8
@@ -62,9 +57,9 @@ services:
       - db_data:/var/lib/mysql/
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=1"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
-      retries: 20
+      retries: 10
 
   solr:
     image: solr:8
@@ -76,9 +71,9 @@ services:
       - drupal
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8983/solr/drupal/admin/ping || exit 1"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
-      retries: 20
+      retries: 10
 
 volumes:
   db_data:
