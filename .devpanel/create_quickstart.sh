@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # ---------------------------------------------------------------------
 # Copyright (C) 2021 DevPanel
 #
@@ -19,34 +20,44 @@ echo -e "-------------------------------"
 echo -e "| DevPanel Quickstart Creator |"
 echo -e "-------------------------------\n"
 
-# Preparing
-DUMPS_DIR=/tmp/devpanel/quickstart/dumps
-STATIC_FILES_DIR=$WEB_ROOT/sites/default/files
+DUMPS_DIR="/tmp/devpanel/quickstart/dumps"
+STATIC_FILES_DIR="$WEB_ROOT/sites/default/files"
+APP_DUMPS_DIR="$APP_ROOT/.devpanel/dumps"
+DRUSH="$APP_ROOT/vendor/bin/drush"
+
+mkdir -p "$DUMPS_DIR"
+mkdir -p "$APP_DUMPS_DIR"
 
 echo "Listing STATIC_FILES_DIR"
-ls -la $STATIC_FILES_DIR
+ls -la "$STATIC_FILES_DIR"
 
-mkdir -p $DUMPS_DIR
+cd "$APP_ROOT"
 
 echo "Drush status"
-./vendor/bin/drush status
+"$DRUSH" status
 
 echo "Listing tables"
-mysql -h$DB_HOST -P$DB_PORT -u$DB_USER -p$DB_PASSWORD $DB_NAME -e "show tables;"
+mysql -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -e "show tables;"
 
-cd $APP_ROOT
-# Step 1 - Compress drupal database
-echo -e "> Export database to $APP_ROOT/.devpanel/dumps"
-mkdir -p $APP_ROOT/.devpanel/dumps
-drush cr --quiet
-drush sql-dump --result-file=../.devpanel/dumps/db.sql --gzip --extra-dump=--no-tablespaces
+# Step 1 - Export Drupal database
+echo "> Export database to $APP_DUMPS_DIR"
+"$DRUSH" cr --quiet
 
-# Step 2 - Compress static files
-echo -e "> Compress static files"
-tar czf $DUMPS_DIR/files.tgz -C $STATIC_FILES_DIR .
+# Use direct mariadb-dump for more reliable output in container/CI environments.
+mariadb-dump --skip-ssl \
+  -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" \
+  --no-tablespaces | gzip > "$APP_DUMPS_DIR/db.sql.gz"
 
-echo -e "> Store files.tgz to $APP_ROOT/.devpanel/dumps"
-mv $DUMPS_DIR/files.tgz $APP_ROOT/.devpanel/dumps/files.tgz
+test -s "$APP_DUMPS_DIR/db.sql.gz"
 
-echo 'Listing $APP_ROOT/.devpanel/dumps files'
-ls -la $APP_ROOT/.devpanel/dumps
+# Step 2 - Compress public files
+echo "> Compress static files"
+tar czf "$DUMPS_DIR/files.tgz" -C "$STATIC_FILES_DIR" .
+
+echo "> Store files.tgz to $APP_DUMPS_DIR"
+mv "$DUMPS_DIR/files.tgz" "$APP_DUMPS_DIR/files.tgz"
+
+test -s "$APP_DUMPS_DIR/files.tgz"
+
+echo "Listing \$APP_ROOT/.devpanel/dumps files"
+ls -la "$APP_DUMPS_DIR"

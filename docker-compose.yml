@@ -15,7 +15,7 @@
 
 services:
   drupal:
-    image: vinugawade/open-social:main
+    image: vinugawade/open-social:latest
     platform: linux/x86_64
     ports:
       - "80:80"
@@ -48,7 +48,7 @@ services:
     # This should prepare the container for local testing, then start Apache.
     command: >
       bash -lc "cd /var/www/html &&
-      if [ -f .devpanel/init.sh ]; then bash .devpanel/init.sh; fi"
+      if [ -f .devpanel/init-container.sh ]; then bash .devpanel/init-container.sh; fi"
 
     # Keep Drupal files inside a named volume for local testing.
     volumes:

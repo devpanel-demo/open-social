@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # ---------------------------------------------------------------------
 # Copyright (C) 2025 DevPanel
 #
@@ -16,18 +17,51 @@
 # ----------------------------------------------------------------------
 
 #== Import database
-if [ -z "$(drush status --field=db-status)" ]; then
-  if [[ -f "$APP_ROOT/.devpanel/dumps/db.sql.gz" ]]; then
-    echo  'Import mysql file ...'
-    # drush sqlq --file="$APP_ROOT/.devpanel/dumps/db.sql.gz" --file-delete
-    drush sqlq --file="$APP_ROOT/.devpanel/dumps/db.sql.gz"
+
+echo "=== DevPanel Runtime Init ==="
+
+DUMP_DB="$APP_ROOT/.devpanel/dumps/db.sql.gz"
+DUMP_FILES="$APP_ROOT/.devpanel/dumps/files.tgz"
+FILES_DIR="$WEB_ROOT/sites/default/files"
+
+# Wait for MySQL
+echo "Waiting for MySQL..."
+for i in $(seq 1 60); do
+  mysqladmin ping -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" --silent && break
+  sleep 2
+done
+
+# Check if DB has tables
+TABLE_COUNT=$(mysql -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -e "SHOW TABLES;" | wc -l)
+
+if [ "$TABLE_COUNT" -le 1 ]; then
+  echo "Database empty → importing dump"
+
+  if [ -f "$DUMP_DB" ]; then
+    gunzip -c "$DUMP_DB" | mysql -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME"
+  else
+    echo "⚠️ No DB dump found, skipping"
   fi
+else
+  echo "Database already populated → skipping import"
 fi
 
-if [[ -n "$DB_SYNC_VOL" ]]; then
-  if [[ ! -f "/var/www/build/.devpanel/init-container.sh" ]]; then
-    echo  'Sync volume...'
-    sudo chown -R 1000:1000 /var/www/build 
-    rsync -av --delete --delete-excluded $APP_ROOT/ /var/www/build
+# Restore files
+if [ ! -d "$FILES_DIR" ] || [ -z "$(ls -A "$FILES_DIR")" ]; then
+  echo "Restoring public files..."
+
+  mkdir -p "$FILES_DIR"
+
+  if [ -f "$DUMP_FILES" ]; then
+    tar xzf "$DUMP_FILES" -C "$FILES_DIR"
+  else
+    echo "⚠️ No files dump found, skipping"
   fi
+else
+  echo "Files already exist → skipping restore"
 fi
+
+# Fix permissions
+chown -R "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$FILES_DIR"
+
+echo "Runtime init complete"
