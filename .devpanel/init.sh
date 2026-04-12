@@ -59,6 +59,7 @@ sudo chown www:www "$SETTINGS_FILES_PATH"
 sudo chmod 644 "$SETTINGS_FILES_PATH"
 
 #== Reset DB (CRITICAL)
+sleep 5
 echo "Reset database..."
 mysql -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" -e "DROP DATABASE IF EXISTS ${DB_NAME}; CREATE DATABASE ${DB_NAME};"
 
@@ -81,8 +82,16 @@ cd "$APP_ROOT"
 echo "Overwrite settings from site-install"
 sudo cp "$APP_ROOT/.devpanel/drupal-settings.local.php" "$WEB_ROOT/sites/default/settings.local.php"
 
-grep -qxF "include \$app_root . '/' . \$site_path . '/settings.local.php';" "$WEB_ROOT/sites/default/settings.php" || \
-echo -e "\nif (file_exists(\$app_root . '/' . \$site_path . '/settings.local.php')) {\n  include \$app_root . '/' . \$site_path . '/settings.local.php';\n}" | sudo tee -a "$WEB_ROOT/sites/default/settings.php" > /dev/null
+SETTINGS_INCLUDE="include \$app_root . '/' . \$site_path . '/settings.local.php';"
+
+if ! grep -qF "$SETTINGS_INCLUDE" "$WEB_ROOT/sites/default/settings.php"; then
+  cat >> "$WEB_ROOT/sites/default/settings.php" <<'PHP'
+
+if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
+  include $app_root . '/' . $site_path . '/settings.local.php';
+}
+PHP
+fi
 
 sudo chown www:www "$WEB_ROOT/sites/default/settings.php" "$WEB_ROOT/sites/default/settings.local.php"
 sudo chmod 644 "$WEB_ROOT/sites/default/settings.php" "$WEB_ROOT/sites/default/settings.local.php"
