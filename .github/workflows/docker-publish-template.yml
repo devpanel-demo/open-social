@@ -38,7 +38,7 @@ jobs:
 
       mysql:
         image: mysql:8.0
-        command: --transaction-isolation=REPEATABLE-READ
+        command: --innodb-buffer-pool-size=64M --innodb-log-file-size=32M --transaction-isolation=REPEATABLE-READ
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_USER: user

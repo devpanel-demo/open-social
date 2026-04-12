@@ -47,7 +47,7 @@ services:
   db:
     image: mysql:8
     restart: always
-    command: --transaction-isolation=REPEATABLE-READ
+    command: --innodb-buffer-pool-size=64M --innodb-log-file-size=32M --transaction-isolation=REPEATABLE-READ
     ports:
       - "3306:3306"
     environment:

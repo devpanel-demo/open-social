@@ -129,3 +129,6 @@ fi
 
 sudo chown www:www "$WEB_ROOT/sites/default/settings.php" "$WEB_ROOT/sites/default/settings.local.php"
 sudo chmod 644 "$WEB_ROOT/sites/default/settings.php" "$WEB_ROOT/sites/default/settings.local.php"
+
+rm -rf /var/www/html/.vscode/extensionsCache || true
+rm -rf /var/www/html/.vscode/.cache || true
