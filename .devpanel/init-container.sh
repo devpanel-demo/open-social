@@ -49,7 +49,7 @@ if [ "$TABLE_COUNT" -le 1 ]; then
     echo "Importing DB..."
     gunzip -c "$DUMP_DB" | mysql -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME"
   else
-    echo "⚠️ DB dump missing → skipping"
+    echo "DB dump missing → skipping"
   fi
 
   # -------------------------------
@@ -57,15 +57,14 @@ if [ "$TABLE_COUNT" -le 1 ]; then
   # Always restore when DB is fresh
   # -------------------------------
   echo "Restoring files..."
-  rm -rf "$FILES_DIR"
-  mkdir -p "$FILES_DIR"
+  sudo rm -rf "$FILES_DIR"
+  sudo mkdir -p "$FILES_DIR"
 
   if [ -f "$DUMP_FILES" ]; then
-    tar xzf "$DUMP_FILES" -C "$FILES_DIR"
+    sudo tar xzf "$DUMP_FILES" -C "$FILES_DIR"
   else
-    echo "⚠️ files.tgz missing → skipping"
+    echo "files.tgz missing → skipping"
   fi
-
 else
   echo "Database already populated → skipping restore"
 fi
@@ -73,12 +72,12 @@ fi
 # -------------------------------
 # Fix permissions
 # -------------------------------
-chown -R "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$FILES_DIR"
+sudo chown -R "$APACHE_RUN_USER:$APACHE_RUN_GROUP" "$FILES_DIR"
 
 # -------------------------------
 # Clear Drupal cache (safe)
 # -------------------------------
 echo "Rebuilding cache..."
-$DRUSH cr || true
+"$DRUSH" cr || true
 
 echo "Runtime init complete"

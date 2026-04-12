@@ -18,7 +18,7 @@ services:
     image: vinugawade/open-social:latest
     platform: linux/x86_64
     ports:
-      - "80:80"
+      - "8081:80"
       - "8080:8080"
     depends_on:
       db:
@@ -48,52 +48,5 @@ services:
     # This should prepare the container for local testing, then start Apache.
     command: >
       bash -lc "cd /var/www/html &&
-      if [ -f .devpanel/init-container.sh ]; then bash .devpanel/init-container.sh; fi"
-
-    # Keep Drupal files inside a named volume for local testing.
-    volumes:
-      - drupal_data:/var/www/html/
-
-  db:
-    image: mysql:8
-    restart: always
-
-    # Avoid Drupal warning about READ-COMMITTED with tables lacking primary keys.
-    command: --transaction-isolation=REPEATABLE-READ
-
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_DATABASE: drupal_db
-      MYSQL_ROOT_PASSWORD: 1
-    volumes:
-      - db_data:/var/lib/mysql/
-
-    # Mark MySQL healthy only when it is actually ready to accept connections.
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "--password=1"]
-      interval: 10s
-      timeout: 5s
-      retries: 20
-
-  solr:
-    image: solr:8
-    restart: always
-    ports:
-      - "8983:8983"
-
-    # Open Social expects the 'drupal' core in this setup.
-    command:
-      - solr-precreate
-      - drupal
-
-    # Mark Solr healthy only when the core endpoint responds.
-    healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://localhost:8983/solr/drupal/admin/ping || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 20
-
-volumes:
-  drupal_data:
-  db_data:
+      if [ -f .devpanel/init-container.sh ]; then bash .devpanel/init-container.sh; fi &&
+      exec apache2-foreground"
