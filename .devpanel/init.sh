@@ -85,7 +85,7 @@ sudo cp "$APP_ROOT/.devpanel/drupal-settings.local.php" "$WEB_ROOT/sites/default
 SETTINGS_INCLUDE="include \$app_root . '/' . \$site_path . '/settings.local.php';"
 
 if ! grep -qF "$SETTINGS_INCLUDE" "$WEB_ROOT/sites/default/settings.php"; then
-  cat >> "$WEB_ROOT/sites/default/settings.php" <<'PHP'
+  sudo cat >> "$WEB_ROOT/sites/default/settings.php" <<'PHP'
 
 if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
   include $app_root . '/' . $site_path . '/settings.local.php';
