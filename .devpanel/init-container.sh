@@ -16,7 +16,8 @@ set -euo pipefail
 # For GNU Affero General Public License see <https://www.gnu.org/licenses/>.
 
 # Runtime bootstrap for a prebuilt image. If the attached database volume is
-# empty, restore the bundled quickstart dump and public files.---------------------------------------
+# empty, restore the bundled quickstart dump and public files.
+# ---------------------------------------------------------------------
 #== Import database
 echo "=== DevPanel runtime init ==="
 
