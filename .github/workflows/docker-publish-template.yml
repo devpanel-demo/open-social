@@ -147,12 +147,12 @@ jobs:
 
       - name: Set env to testing environment
         run: |
-          echo "IMAGE_TAG=vinugawade/open-social:develop" >> $GITHUB_ENV
+          echo "IMAGE_TAG=devpanel/open-social:develop" >> $GITHUB_ENV
 
       - name: Set env to production environment
         if: endsWith(github.ref, '/main')
         run: |
-          echo "IMAGE_TAG=vinugawade/open-social:main" >> $GITHUB_ENV
+          echo "IMAGE_TAG=devpanel/open-social:main" >> $GITHUB_ENV
 
       - name: Commit and push the container state to Docker Hub
         run: |
@@ -162,5 +162,5 @@ jobs:
       - name: Push to tag latest
         if: endsWith(github.ref, '/main')
         run: |
-          docker commit ${{ job.services.webserver.id }} vinugawade/open-social:latest
-          docker push vinugawade/open-social:latest
+          docker commit ${{ job.services.webserver.id }} devpanel/open-social:latest
+          docker push devpanel/open-social:latest
