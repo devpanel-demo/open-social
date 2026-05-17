@@ -90,6 +90,7 @@ jobs:
           exit 1
 
       - name: Setup Project
+        timeout-minutes: 20
         run: |
           echo "PREPARE DIR FOR INSTALL"
           docker exec ${{ job.services.webserver.id }} bash -c "sudo rm -rf \"\$APP_ROOT\" && sudo mkdir -p \"\$APP_ROOT\""
@@ -98,7 +99,7 @@ jobs:
           docker exec ${{ job.services.webserver.id }} bash -c "cd \"\$APP_ROOT\" && rm -rf .git"
 
           echo "INSTALL CUSTOM PACKAGE"
-          docker exec ${{ job.services.webserver.id }} bash -c "cd \"\$APP_ROOT\" && bash .devpanel/custom_package_installer.sh"
+          docker exec --user root ${{ job.services.webserver.id }} bash -c "cd \"\$APP_ROOT\" && bash .devpanel/custom_package_installer.sh"
 
           echo "INSTALL DRUPAL"
           docker exec ${{ job.services.webserver.id }} bash -c "cd \"\$APP_ROOT\" && bash .devpanel/init.sh"

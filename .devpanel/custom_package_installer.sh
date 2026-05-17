@@ -11,6 +11,7 @@
 if [ -n "$DEBUG_SCRIPT" ]; then
   set -x
 fi
+set -eu -o pipefail
 
 # Install APT packages.
 if ! command -v npm >/dev/null 2>&1; then

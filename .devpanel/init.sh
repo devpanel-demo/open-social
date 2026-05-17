@@ -32,8 +32,14 @@ else
   time source .devpanel/composer_setup.sh
   echo
 fi
-# If update fails, change it to install.
-time composer -n update --no-dev --no-progress
+# Install from lock file when available.
+if [ -f composer.lock ]; then
+  echo 'Install Composer dependencies from lock file.'
+  time composer -n install --no-dev --no-progress --prefer-dist --optimize-autoloader
+else
+  echo 'No composer.lock found. Updating Composer dependencies.'
+  time composer -n update --no-dev --no-progress --prefer-dist --optimize-autoloader
+fi
 
 #== Create the private files directory.
 if [ ! -d private ]; then
@@ -53,7 +59,7 @@ fi
 echo
 if [ -z "$(drush status --field=db-status)" ]; then
   echo 'Install Drupal.'
-  time drush -n si
+  time drush -n si social
 
   echo
   echo 'Tell Automatic Updates about patches.'
