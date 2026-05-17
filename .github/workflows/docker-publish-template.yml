@@ -108,18 +108,9 @@ jobs:
 
           docker exec ${{ job.services.webserver.id }} bash -c "
             sudo rsync -a \
-              --exclude='.git' \
-              --exclude='.github' \
               --exclude='.DS_Store' \
-              --exclude='.ddev/.dbimageBuild' \
-              --exclude='.ddev/.webimageBuild' \
-              --exclude='.ddev/.ddev-docker-compose-base.yaml' \
-              --exclude='.ddev/.ddev-docker-compose-full.yaml' \
-              --exclude='logs/*' \
-              --exclude='web/sites/default/files' \
-              --exclude='web/sites/default/private' \
-              --exclude='web/sites/default/settings.php' \
-              --exclude='web/sites/default/settings.local.php' \
+              --exclude='.ddev' \
+              --exclude='.vscode' \
               /app/ \"\$APP_ROOT\"/
           "
 
@@ -197,6 +188,7 @@ jobs:
 
       - name: Commit and push the container state to Docker Hub
         run: |
+          docker exec ${{ job.services.webserver.id }} bash -c "cd \"\$APP_ROOT\" && rm -rf .github .ddev .DS_Store"
           docker commit ${{ job.services.webserver.id }} ${{ env.IMAGE_TAG }}
           docker push ${{ env.IMAGE_TAG }}
 
