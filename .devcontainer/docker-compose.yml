@@ -28,3 +28,4 @@ services:
       - "..:/var/www/html"
     depends_on:
       - db
+      - solr
