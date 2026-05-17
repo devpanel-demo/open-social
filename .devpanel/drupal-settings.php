@@ -783,10 +783,6 @@ $databases['default']['default'] = [
  *
  * Keep this code block at the end of this file to take full effect.
  */
-if (file_exists(__DIR__ . '/settings.local.php')) {
-  include __DIR__ . '/settings.local.php';
-}
-
-if (file_exists(__DIR__ . '/settings.devpanel.php')) {
-  include __DIR__ . '/settings.devpanel.php';
+if (file_exists(getenv('APP_ROOT') . '/.devpanel/settings.devpanel.php')) {
+  include getenv('APP_ROOT') . '/.devpanel/settings.devpanel.php';
 }
