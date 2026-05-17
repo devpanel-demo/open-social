@@ -1,7 +1,6 @@
 #!/bin/bash
-set -euo pipefail
 # ---------------------------------------------------------------------
-# Copyright (C) 2021 DevPanel
+# Copyright (C) 2024 DevPanel
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -14,53 +13,33 @@ set -euo pipefail
 # GNU Affero General Public License for more details.
 #
 # For GNU Affero General Public License see <https://www.gnu.org/licenses/>.
-
-# Export a reusable quickstart snapshot from the prepared build container.
-# The snapshot contains the Drupal database and public files only.
 # ----------------------------------------------------------------------
 
 echo -e "-------------------------------"
 echo -e "| DevPanel Quickstart Creator |"
 echo -e "-------------------------------\n"
 
-DUMPS_DIR="/tmp/devpanel/quickstart/dumps"
-STATIC_FILES_DIR="$WEB_ROOT/sites/default/files"
-APP_DUMPS_DIR="$APP_ROOT/.devpanel/dumps"
-DRUSH="$APP_ROOT/vendor/bin/drush"
 
-mkdir -p "$DUMPS_DIR"
-mkdir -p "$APP_DUMPS_DIR"
+# Preparing
+WORK_DIR=$APP_ROOT
+TMP_DIR=/tmp/devpanel/quickstart
+DUMPS_DIR=$TMP_DIR/dumps
+STATIC_FILES_DIR=$WEB_ROOT/sites/default/files
 
-echo "Listing STATIC_FILES_DIR"
-ls -la "$STATIC_FILES_DIR"
+mkdir -p $DUMPS_DIR
 
-cd "$APP_ROOT"
+# Step 1 - Compress drupal database
+cd $WORK_DIR
+echo -e "> Export database to $APP_ROOT/.devpanel/dumps"
+mkdir -p $APP_ROOT/.devpanel/dumps
+drush cr --quiet
+drush sql-dump --result-file=../.devpanel/dumps/db.sql --gzip
 
-echo "Drush status"
-"$DRUSH" status
+# Step 2 - Compress static files
+cd $WORK_DIR
+echo -e "> Compress static files"
+tar czf $DUMPS_DIR/files.tgz -C $STATIC_FILES_DIR .
 
-echo "Listing tables"
-mysql -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" -e "show tables;"
-
-# Export the current database.
-echo "> Export database to $APP_DUMPS_DIR"
-"$DRUSH" cr --quiet
-
-# Direct mariadb-dump is more reliable than drush sql-dump in CI/container builds.
-mariadb-dump --skip-ssl \
-  -h"$DB_HOST" -P"$DB_PORT" -u"$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" \
-  --no-tablespaces | gzip > "$APP_DUMPS_DIR/db.sql.gz"
-
-test -s "$APP_DUMPS_DIR/db.sql.gz"
-
-# Archive public files for runtime restore.
-echo "> Compress static files"
-tar czf "$DUMPS_DIR/files.tgz" -C "$STATIC_FILES_DIR" .
-
-echo "> Store files.tgz to $APP_DUMPS_DIR"
-mv "$DUMPS_DIR/files.tgz" "$APP_DUMPS_DIR/files.tgz"
-
-test -s "$APP_DUMPS_DIR/files.tgz"
-
-echo "Listing \$APP_ROOT/.devpanel/dumps files"
-ls -la "$APP_DUMPS_DIR"
+echo -e "> Store files.tgz to $APP_ROOT/.devpanel/dumps"
+mkdir -p $APP_ROOT/.devpanel/dumps
+mv $DUMPS_DIR/files.tgz $APP_ROOT/.devpanel/dumps/files.tgz
