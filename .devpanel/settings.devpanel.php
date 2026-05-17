@@ -22,3 +22,7 @@ if (!empty($realpath)) {
   $settings['file_private_path'] = $realpath;
 }
 $settings['trusted_host_patterns'][] = getenv('DP_HOSTNAME') ?: '.*';
+
+$config['system.logging']['error_level'] = 'hide';
+
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);

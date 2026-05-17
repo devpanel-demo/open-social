@@ -3,6 +3,8 @@ services:
     image: mysql:8.0
     restart: unless-stopped
     command: --innodb-buffer-pool-size=64M --innodb-log-file-size=32M --transaction-isolation=REPEATABLE-READ
+    options: >-
+      --transaction-isolation=READ-COMMITTED
     environment:
       cap_add: "SYS_NICE"
       MYSQL_ROOT_PASSWORD: root
@@ -14,7 +16,7 @@ services:
     volumes:
       - database:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
   solr:

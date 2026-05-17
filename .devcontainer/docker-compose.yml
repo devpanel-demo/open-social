@@ -5,16 +5,16 @@ services:
   app:
     image: devpanel/php:8.4-base
     environment:
-      DP_APP_ID: 'open-social'
-      APP_ROOT: '/var/www/html'
-      WEB_ROOT: '/var/www/html/web'
+      DP_APP_ID: "open-social"
+      APP_ROOT: "/var/www/html"
+      WEB_ROOT: "/var/www/html/web"
       # Devcontainer-only unzip defaults for virtiofs metadata compatibility.
-      UNZIPOPT: '-o -DD'
-      CODES_USER_DATA_DIR: '/var/www/html/.vscode'
-      CODES_WORKING_DIR: '/var/www/html'
-      APACHE_RUN_USER: 'www'
-      APACHE_RUN_GROUP: 'www'
-      CODES_ENABLE: 'no'
+      UNZIPOPT: "-o -DD"
+      CODES_USER_DATA_DIR: "/var/www/html/.vscode"
+      CODES_WORKING_DIR: "/var/www/html"
+      APACHE_RUN_USER: "www"
+      APACHE_RUN_GROUP: "www"
+      CODES_ENABLE: "no"
       DB_HOST: db
       DB_PORT: 3306
       DB_ROOT_PASSWORD: root
