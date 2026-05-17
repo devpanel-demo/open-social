@@ -93,10 +93,50 @@ jobs:
         timeout-minutes: 20
         run: |
           echo "PREPARE DIR FOR INSTALL"
-          docker exec ${{ job.services.webserver.id }} bash -c "sudo rm -rf \"\$APP_ROOT\" && sudo mkdir -p \"\$APP_ROOT\""
-          docker exec ${{ job.services.webserver.id }} bash -c "sudo cp -r /app/. \"\$APP_ROOT\"/."
-          docker exec ${{ job.services.webserver.id }} bash -c "sudo chown -R www:www \"\$APP_ROOT\" && chmod +x \"\$APP_ROOT\"/.devpanel/init.sh \"\$APP_ROOT\"/.devpanel/custom_package_installer.sh \"\$APP_ROOT\"/.devpanel/init-container.sh \"\$APP_ROOT\"/.devpanel/create_quickstart.sh \"\$APP_ROOT\"/.devpanel/re-config.sh"
-          docker exec ${{ job.services.webserver.id }} bash -c "cd \"\$APP_ROOT\" && rm -rf .git"
+
+          docker exec ${{ job.services.webserver.id }} bash -c "
+            command -v rsync >/dev/null 2>&1 || (
+              apt-get update &&
+              apt-get install -y rsync
+            )
+          "
+
+          docker exec ${{ job.services.webserver.id }} bash -c "
+            sudo rm -rf \"\$APP_ROOT\" &&
+            sudo mkdir -p \"\$APP_ROOT\"
+          "
+
+          docker exec ${{ job.services.webserver.id }} bash -c "
+            sudo rsync -a \
+              --exclude='.git' \
+              --exclude='.github' \
+              --exclude='.DS_Store' \
+              --exclude='.ddev/.dbimageBuild' \
+              --exclude='.ddev/.webimageBuild' \
+              --exclude='.ddev/.ddev-docker-compose-base.yaml' \
+              --exclude='.ddev/.ddev-docker-compose-full.yaml' \
+              --exclude='logs/*' \
+              --exclude='web/sites/default/files' \
+              --exclude='web/sites/default/private' \
+              --exclude='web/sites/default/settings.php' \
+              --exclude='web/sites/default/settings.local.php' \
+              /app/ \"\$APP_ROOT\"/
+          "
+
+          docker exec ${{ job.services.webserver.id }} bash -c "
+            sudo chown -R www:www \"\$APP_ROOT\" &&
+            chmod +x \
+              \"\$APP_ROOT\"/.devpanel/init.sh \
+              \"\$APP_ROOT\"/.devpanel/custom_package_installer.sh \
+              \"\$APP_ROOT\"/.devpanel/init-container.sh \
+              \"\$APP_ROOT\"/.devpanel/create_quickstart.sh \
+              \"\$APP_ROOT\"/.devpanel/re-config.sh
+          "
+
+          docker exec ${{ job.services.webserver.id }} bash -c "
+            cd \"\$APP_ROOT\" &&
+            rm -rf .git
+          "
 
           echo "INSTALL CUSTOM PACKAGE"
           docker exec --user root ${{ job.services.webserver.id }} bash -c "cd \"\$APP_ROOT\" && bash .devpanel/custom_package_installer.sh"
