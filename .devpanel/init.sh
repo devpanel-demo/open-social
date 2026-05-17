@@ -71,11 +71,13 @@ if [ -z "$(drush status --field=db-status)" ]; then
     exit 1
   fi
 
-  #== Create private files directory.
-  if [ ! -d private ]; then
-    mkdir -p private
+  #== Configure private files before install.
+  mkdir -p "${APP_ROOT}/private"
+  chmod 777 "${APP_ROOT}/private"
+
+  if ! grep -q "file_private_path" web/sites/default/settings.php 2>/dev/null; then
+    echo "\$settings['file_private_path'] = '${APP_ROOT}/private';" >> web/sites/default/settings.php
   fi
-  chmod 777 private
 
   time drush -n si social \
     --account-name=admin \
