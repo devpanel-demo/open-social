@@ -79,8 +79,8 @@ if [ -z "$(drush status --field=db-status)" ]; then
   chmod 644 "${WEB_ROOT}/sites/default/settings.php"
 
   time drush -n site:install social \
-    --account-name=admin \
-    --account-pass=admin \
+    --account-name=devpanel \
+    --account-pass=devpanel \
     --site-name="Open Social" \
     --db-url="mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}" \
     --yes
