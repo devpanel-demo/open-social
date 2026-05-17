@@ -17,12 +17,6 @@ services:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
-  solr:
-    image: solr:8
-    restart: unless-stopped
-    command: bash -c "solr-precreate social && solr-foreground"
-    ports:
-      - "8983:8983"
 
 volumes:
   database:

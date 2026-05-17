@@ -78,7 +78,7 @@ if [ -z "$(drush status --field=db-status)" ]; then
   cp "${APP_ROOT}/.devpanel/drupal-settings.php" "${WEB_ROOT}/sites/default/settings.php"
   chmod 644 "${WEB_ROOT}/sites/default/settings.php"
 
-  time drush -n si social \
+  time drush -n site:install social \
     --account-name=admin \
     --account-pass=admin \
     --site-name="Open Social" \

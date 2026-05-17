@@ -15,4 +15,4 @@
 .ddev/.dbimageBuild
 .ddev/.webimageBuild
 .ddev/.ddev-docker-compose-base.yaml
-.ddev/.ddev-docker-compose-full.yaml
+.ddev/.ddev-docker-compose-full.yaml.DS_Store
