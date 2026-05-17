@@ -59,7 +59,24 @@ fi
 echo
 if [ -z "$(drush status --field=db-status)" ]; then
   echo 'Install Drupal.'
-  time drush -n si social
+
+  echo 'Verify Open Social profile.'
+  if [ ! -d web/profiles/contrib/open_social ]; then
+    echo 'ERROR: Open Social profile is missing at web/profiles/contrib/open_social'
+    echo 'Composer packages installed:'
+    composer show goalgorilla/open_social || true
+    echo 'Profiles directory:'
+    ls -al web/profiles || true
+    ls -al web/profiles/contrib || true
+    exit 1
+  fi
+
+  time drush -n si social \
+    --account-name=admin \
+    --account-pass=admin \
+    --site-name="Open Social" \
+    --db-url="mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}" \
+    --yes
 
   echo
   echo 'Tell Automatic Updates about patches.'
