@@ -92,9 +92,10 @@ if [ -z "$(drush status --field=db-status)" ]; then
   chmod 644 "${WEB_ROOT}/sites/default/settings.php"
 
   echo
-  echo 'Disable Solr search server.'
-  drush -n config:set search_api.server.social_solr status 0 || true
-  drush -n config:set search_api.index.social_all status 0 || true
+  echo 'Remove Solr search configuration.'
+  drush -n config:delete search_api.server.social_solr -y || true
+  drush -n config:delete search_api.index.social_all -y || true
+  drush -n pm:uninstall search_api_solr -y || true
   drush -n cr || true
 
   echo
@@ -105,6 +106,7 @@ if [ -z "$(drush status --field=db-status)" ]; then
   echo
   echo 'Cron run to finish post-install tasks.'
   drush -n cron || true
+  drush -n cr || true
 else
   echo 'Update database.'
   time drush -n updb
