@@ -44,3 +44,14 @@ echo
 echo 'Populate caches.'
 drush cache:warm &> /dev/null || :
 $APP_ROOT/.devpanel/warm
+
+echo 'Configure VS Code defaults.'
+mkdir -p "${APP_ROOT}/.vscode/User"
+cat > "${APP_ROOT}/.vscode/User/settings.json" <<'EOF'
+{
+  "workbench.colorTheme": "GitHub Dark"
+  "workbench.preferredDarkColorTheme": "GitHub Dark"
+  "window.autoDetectColorScheme": false  
+}
+EOF
+chmod -R 777 "${APP_ROOT}/.vscode"
