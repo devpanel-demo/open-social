@@ -87,6 +87,7 @@ if [ -z "$(drush status --field=db-status)" ]; then
 
   echo
   echo 'Restore env-based settings.php.'
+  chmod u+w "${WEB_ROOT}/sites/default/settings.php" || true
   cp "${APP_ROOT}/.devpanel/drupal-settings.php" "${WEB_ROOT}/sites/default/settings.php"
   chmod 644 "${WEB_ROOT}/sites/default/settings.php"
 
