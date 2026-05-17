@@ -71,11 +71,18 @@ if [ -z "$(drush status --field=db-status)" ]; then
     exit 1
   fi
 
+  #== Create private files directory.
+  if [ ! -d private ]; then
+    mkdir -p private
+  fi
+  chmod 777 private
+
   time drush -n si social \
     --account-name=admin \
     --account-pass=admin \
     --site-name="Open Social" \
     --db-url="mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}" \
+    --site-settings=sites/default/settings.php \
     --yes
 
   echo
