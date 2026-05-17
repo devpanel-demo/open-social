@@ -71,13 +71,12 @@ if [ -z "$(drush status --field=db-status)" ]; then
     exit 1
   fi
 
-  #== Configure private files before install.
+  #== Configure settings and private files before install.
   mkdir -p "${APP_ROOT}/private"
   chmod 777 "${APP_ROOT}/private"
 
-  if ! grep -q "file_private_path" web/sites/default/settings.php 2>/dev/null; then
-    echo "\$settings['file_private_path'] = '${APP_ROOT}/private';" >> web/sites/default/settings.php
-  fi
+  cp "${APP_ROOT}/.devpanel/drupal-settings.php" "${WEB_ROOT}/sites/default/settings.php"
+  chmod 644 "${WEB_ROOT}/sites/default/settings.php"
 
   time drush -n si social \
     --account-name=admin \
