@@ -82,7 +82,6 @@ if [ -z "$(drush status --field=db-status)" ]; then
     --account-pass=admin \
     --site-name="Open Social" \
     --db-url="mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}" \
-    --site-settings=sites/default/settings.php \
     --yes
 
   echo
