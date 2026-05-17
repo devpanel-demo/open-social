@@ -5,7 +5,8 @@
     "workspaceFolder": "/var/www/html",
     "shutdownAction": "stopCompose",
     "forwardPorts": [
-        80
+        80,
+        8983
     ],
     "updateContentCommand": ".devpanel/init.sh",
     "remoteUser": "www"

@@ -29,6 +29,8 @@ jobs:
           DB_USER: user
           DB_PASSWORD: password
           DB_DRIVER: mysql
+          SOLR_HOST: solr
+          SOLR_PORT: 8983
         ports:
           - 80:80
         volumes:
@@ -50,6 +52,18 @@ jobs:
           --health-timeout=5s
           --health-retries=10
 
+      solr:
+        image: solr:8
+        ports:
+          - 8983:8983
+        command: >-
+          bash -c "solr-precreate drupal && solr-foreground"
+        options: >-
+          --health-cmd="bash -c 'curl -fsS http://localhost:8983/solr/drupal/admin/ping || exit 1'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=20
+
     steps:
       - name: Set up Docker Environment
         uses: docker/setup-buildx-action@v3
@@ -64,6 +78,15 @@ jobs:
             sleep 5
           done
           echo "MySQL did not become ready in time"
+          exit 1
+
+      - name: Wait for Solr
+        run: |
+          for i in {1..30}; do
+            docker exec ${{ job.services.solr.id }} bash -c "curl -fsS http://localhost:8983/solr/drupal/admin/ping" && exit 0
+            sleep 5
+          done
+          echo "Solr did not become ready in time"
           exit 1
 
       - name: Setup Project

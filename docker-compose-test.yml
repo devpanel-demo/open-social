@@ -22,6 +22,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      solr:
+        condition: service_healthy
     environment:
       APP_ROOT: /var/www/html
       WEB_ROOT: /var/www/html/web
@@ -38,6 +40,8 @@ services:
       PASSWORD: ""
       APACHE_RUN_USER: www
       APACHE_RUN_GROUP: www
+      SOLR_HOST: solr
+      SOLR_PORT: 8983
 
   db:
     image: mysql:8
@@ -55,6 +59,19 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+  solr:
+    image: solr:8
+    restart: always
+    ports:
+      - "8983:8983"
+    command:
+      - solr-precreate
+      - drupal
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8983/solr/drupal/admin/ping || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
 
 volumes:
   db_data:

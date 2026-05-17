@@ -22,7 +22,10 @@ services:
       DB_USER: user
       DB_PASSWORD: password
       DB_DRIVER: mysql
+      SOLR_HOST: solr
+      SOLR_PORT: 8983
     volumes:
       - "..:/var/www/html"
     depends_on:
       - db
+      - solr

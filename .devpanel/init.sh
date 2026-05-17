@@ -92,13 +92,6 @@ if [ -z "$(drush status --field=db-status)" ]; then
   chmod 644 "${WEB_ROOT}/sites/default/settings.php"
 
   echo
-  echo 'Remove Solr search configuration.'
-  drush -n config:delete search_api.server.social_solr -y || true
-  drush -n config:delete search_api.index.social_all -y || true
-  drush -n pm:uninstall search_api_solr -y || true
-  drush -n cr || true
-
-  echo
   echo 'Tell Automatic Updates about patches.'
   drush -n cset --input-format=yaml package_manager.settings additional_trusted_composer_plugins '["cweagans/composer-patches"]'
   time drush ev '\Drupal::moduleHandler()->invoke("automatic_updates", "modules_installed", [[], FALSE])'
