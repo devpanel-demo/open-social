@@ -15,6 +15,10 @@
 # For GNU Affero General Public License see <https://www.gnu.org/licenses/>.
 # ----------------------------------------------------------------------
 
+echo 'Apply env-based settings.php.'
+cp "${APP_ROOT}/.devpanel/drupal-settings.php" "${WEB_ROOT}/sites/default/settings.php"
+chmod 644 "${WEB_ROOT}/sites/default/settings.php"
+
 #== Import database
 if [ -z "$(drush status --field=db-status)" ]; then
   if [[ -f "$APP_ROOT/.devpanel/dumps/db.sql.gz" ]]; then
@@ -26,7 +30,7 @@ fi
 if [[ -n "$DB_SYNC_VOL" ]]; then
   if [[ ! -f "/var/www/build/.devpanel/init-container.sh" ]]; then
     echo  'Sync volume...'
-    sudo chown -R 1000:1000 /var/www/build 
+    sudo chown -R 1000:1000 /var/www/build
     rsync -av --delete --delete-excluded $APP_ROOT/ /var/www/build
   fi
 fi

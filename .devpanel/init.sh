@@ -86,6 +86,11 @@ if [ -z "$(drush status --field=db-status)" ]; then
     --yes
 
   echo
+  echo 'Restore env-based settings.php.'
+  cp "${APP_ROOT}/.devpanel/drupal-settings.php" "${WEB_ROOT}/sites/default/settings.php"
+  chmod 644 "${WEB_ROOT}/sites/default/settings.php"
+
+  echo
   echo 'Tell Automatic Updates about patches.'
   drush -n cset --input-format=yaml package_manager.settings additional_trusted_composer_plugins '["cweagans/composer-patches"]'
   time drush ev '\Drupal::moduleHandler()->invoke("automatic_updates", "modules_installed", [[], FALSE])'
